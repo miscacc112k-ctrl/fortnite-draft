@@ -1,10 +1,104 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fortnite Draft</title>
+<title>Student Battle Royale Leaderboard</title>
+<style>
+body {font-family: Arial; text-align:center; background:#111; color:white;}
+input, button {padding:10px; margin:5px;}
+table {margin:auto; margin-top:20px; border-collapse:collapse;}
+td, th {border:1px solid white; padding:10px;}
+.clear-btn {background-color: #ff4444; color: white; border: none; cursor: pointer; margin-top: 20px;}
+.clear-btn:hover {background-color: #cc0000;}
+</style>
 </head>
+
 <body>
-    <h1>Welcome to the Fortnite Draft Page</h1>
-    <p>This is a sample GitHub Pages site.</p>
+
+<h1>Student Battle Royale</h1>
+<p>Enter your name and activity to earn points</p>
+
+<input id="name" placeholder="Your name">
+<select id="action">
+<option value="10">Homework Completed +10</option>
+<option value="20">Exam Passed +20</option>
+<option value="15">Interview Completed +15</option>
+<option value="30">Internship Offer +30</option>
+</select>
+
+<button onclick="addScore()">Submit</button>
+
+<h2>Leaderboard</h2>
+
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Player</th>
+<th>Points</th>
+</tr>
+</thead>
+<tbody id="leaderboard"></tbody>
+</table>
+
+<button class="clear-btn" onclick="clearLeaderboard()">Clear Leaderboard</button>
+
+<script>
+
+let players = JSON.parse(localStorage.getItem('players')) || {}
+
+function addScore() {
+
+let name = document.getElementById("name").value.trim()
+let points = parseInt(document.getElementById("action").value)
+
+if(!name) {
+alert("Please enter your name!")
+return
+}
+
+if(players[name]) {
+players[name] += points
+} else {
+players[name] = points
+}
+
+localStorage.setItem('players', JSON.stringify(players))
+document.getElementById("name").value = ""
+updateBoard()
+}
+
+function updateBoard() {
+
+let board = document.getElementById("leaderboard")
+board.innerHTML = ""
+
+let sorted = Object.entries(players).sort((a,b)=>b[1]-a[1])
+
+sorted.forEach((player, index) => {
+
+let row = `<tr>
+<td>${index + 1}</td>
+<td>${player[0]}</td>
+<td>${player[1]}</td>
+</tr>`
+
+board.innerHTML += row
+
+})
+
+}
+
+function clearLeaderboard() {
+if(confirm("Are you sure you want to clear the leaderboard?")) {
+players = {}
+localStorage.removeItem('players')
+updateBoard()
+}
+}
+
+updateBoard()
+
+</script>
+
 </body>
 </html>
